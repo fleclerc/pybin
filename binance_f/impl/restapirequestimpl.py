@@ -1,4 +1,5 @@
 from binance_f.impl import RestApiRequest
+from binance_f.impl.utils.jsonwrapper import JsonWrapper
 from binance_f.impl.utils.urlparamsbuilder import UrlParamsBuilder
 from binance_f.impl.utils.apisignature import create_signature
 from binance_f.impl.utils.apisignature import create_signature_with_query
@@ -778,6 +779,22 @@ class RestApiRequestImpl(object):
         request.json_parser = parse
         return request
 
+    def get_top_long_short_accounts_raw(self, symbol, period, startTime, endTime, limit):
+        builder = UrlParamsBuilder()
+        builder.put_url("symbol", symbol)
+        builder.put_url("period", period)
+        builder.put_url("startTime", startTime)
+        builder.put_url("endTime", endTime)
+        builder.put_url("limit", limit)
+
+        request = self.__create_request_by_get("/futures/data/topLongShortAccountRatio", builder)
+
+        def parse(json_wrapper: JsonWrapper):
+            return json_wrapper.json_object
+
+        request.json_parser = parse
+        return request
+
     def get_top_long_short_positions(self, symbol, period, startTime, endTime, limit):
         builder = UrlParamsBuilder()
         builder.put_url("symbol", symbol)
@@ -816,6 +833,22 @@ class RestApiRequestImpl(object):
                 element = LongShortRatio.json_parse(item)
                 result.append(element)
             return result
+
+        request.json_parser = parse
+        return request
+
+    def get_global_long_short_accounts_raw(self, symbol, period, startTime, endTime, limit):
+        builder = UrlParamsBuilder()
+        builder.put_url("symbol", symbol)
+        builder.put_url("period", period)
+        builder.put_url("startTime", startTime)
+        builder.put_url("endTime", endTime)
+        builder.put_url("limit", limit)
+
+        request = self.__create_request_by_get("/futures/data/globalLongShortAccountRatio", builder)
+
+        def parse(json_wrapper: JsonWrapper):
+            return json_wrapper.json_object
 
         request.json_parser = parse
         return request

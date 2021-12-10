@@ -474,7 +474,7 @@ class RequestClient(object):
         GET /futures/data/topLongShortAccountRatio
 
         """
-        response = call_sync(self.request_impl.get_top_long_short_accounts(symbol, period, startTime, endTime, limit))
+        response = call_sync(self.request_impl.get_top_long_short_accounts_raw(symbol, period, startTime, endTime, limit))
         self.refresh_limits(response[1])
         return response[0]
 
@@ -496,7 +496,7 @@ class RequestClient(object):
         GET /futures/data/globalLongShortAccountRatio
 
         """
-        response = call_sync(self.request_impl.get_global_long_short_accounts(symbol, period, startTime, endTime, limit))
+        response = call_sync(self.request_impl.get_global_long_short_accounts_raw(symbol, period, startTime, endTime, limit))
         self.refresh_limits(response[1])
         return response[0]
 
