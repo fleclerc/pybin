@@ -16,3 +16,5 @@ loggers:
     level: INFO
   pybin.main:
     level: DEBUG
+  binance-client.watchdog:
+    level: WARN

@@ -276,10 +276,13 @@ class WebsocketRequestImpl(object):
         def json_parse(json_wrapper):
             result = OrderBookEvent.json_parse(json_wrapper)
             return result
+        def json_parse_raw(json_wrapper):
+            result = json_wrapper.json_object
+            return result
 
         request = WebsocketRequest()
         request.subscription_handler = subscription_handler
-        request.json_parser = json_parse
+        request.json_parser = json_parse_raw
         request.update_callback = callback
         request.error_handler = error_handler
 
