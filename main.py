@@ -53,7 +53,7 @@ def saveLongShort():
     glob = request_client.get_global_long_short_accounts(symbol="BTCUSDT", period='5m', limit=1)
     top = request_client.get_top_long_short_accounts(symbol="BTCUSDT", period='5m', limit=1)
     logger.info(f"saveLongShort {datetime.fromtimestamp(glob[0]['timestamp']/1000.0)}")
-    db.longshort.insert_one({'global': glob, 'top': top})
+    db.longshort.insert_one({'timestamp': glob[0]['timestamp'], 'global': glob[0], 'top': top[0]})
 
 
 setupLogging()
