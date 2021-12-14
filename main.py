@@ -22,6 +22,8 @@ def setupLogging():
 class DepthSubscription:
     def __init__(self):
         self.sub_client = sub_client = SubscriptionClient(api_key=g_api_key, secret_key=g_secret_key)
+        self.count = 0
+
     def __enter__(self):
         return self
     def __exit__(self, type, value, traceback):
@@ -37,6 +39,9 @@ class DepthSubscription:
             if data_type == SubscribeMessageType.RESPONSE:
                 logger.info(f"RESPONSE - Event ID: {event}")
             elif  data_type == SubscribeMessageType.PAYLOAD:
+                self.count += 1
+                if self.count % 50 == 0:
+                    logger.info(f"{self.count} depth events processed")
                 db.depth.insert_one(event)
             else:
                 logger.error("???")

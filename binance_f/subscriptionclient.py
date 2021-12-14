@@ -63,6 +63,7 @@ class SubscriptionClient(object):
         for conn in self.connections:
             conn.close()
         self.connections.clear()
+        self.__watch_dog.shutdown()
 
     def subscribe_aggregate_trade_event(self, symbol: 'str', callback, error_handler=None):
         """
