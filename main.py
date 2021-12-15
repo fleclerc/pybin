@@ -69,7 +69,7 @@ class TradesSubscription:
                 logger.info(f"RESPONSE - Event ID: {event}")
             elif  data_type == SubscribeMessageType.PAYLOAD:
                 self.count += 1
-                if self.count % 5 == 0:
+                if self.count % 50 == 0:
                     logger.info(f"{self.count} trades events processed")
                 db.trades.insert_one(event.toJSON())
             else:
