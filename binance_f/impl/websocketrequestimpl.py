@@ -26,6 +26,9 @@ class WebsocketRequestImpl(object):
         def json_parse(json_wrapper):
             result = AggregateTradeEvent.json_parse(json_wrapper)
             return result
+        def json_parse_raw(json_wrapper):
+            result = json_wrapper.json_object
+            return result
 
         request = WebsocketRequest()
         request.subscription_handler = subscription_handler

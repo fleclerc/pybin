@@ -6,8 +6,9 @@ conn = "mongodb://localhost:27017"
 client = pymongo.MongoClient(conn)
 
 # Create a database
-db = client.binance
+db = client.binancetest
 print(db.depth.count_documents({}))
+print(db.trades.count_documents({}))
 print(db.longshort.count_documents({}))
 
 # %%  print depth
@@ -15,8 +16,14 @@ for entry in db.depth.find():
     print(entry)
     break
 
+# %%  print trades
+#db.trades.drop()
+for entry in db.trades.find():
+    print(entry)
+    break
+
 # %%  print longshort
-for entry in db3.longshort.find():
+for entry in db.longshort.find():
     print(entry)
     break
 
@@ -27,18 +34,28 @@ tdiff = []
 for entry in db.longshort.find().sort( [( "global.timestamp", 1 )] ):
     if not prev: 
         prev = entry
-    gls = entry["global"][0]["longShortRatio"]
-    tls = entry["top"][0]["longShortRatio"]
-    pgls = prev["global"][0]["longShortRatio"]
-    ptls = prev["top"][0]["longShortRatio"]
+    gls = entry["global"]["longShortRatio"]
+    tls = entry["top"]["longShortRatio"]
+    pgls = prev["global"]["longShortRatio"]
+    ptls = prev["top"]["longShortRatio"]
     gdiff.append(float(gls)-float(pgls))
     tdiff.append( float(tls)-float(ptls))
+    #timestamp = entry["timestamp"][0] if isinstance(entry["timestamp"], list) else entry["timestamp"]
+    timestamp = entry["timestamp"]
+    print (datetime.fromtimestamp(float(timestamp)/1000.0))
 print (f"global min: {min(gdiff)} max: {max(gdiff)}   top min: {min(tdiff)} max: {max(tdiff)}" )
 
 # %%
 import pandas as pd
-df = pd.DataFrame(list(db.longshort.find().sort( [( "global.timestamp", 1 )] )))
-df.head()
+data = pd.json_normalize(list(db.longshort.find().sort( [( "timestamp", 1 )] )))
+#'global',
+#['timestamp', 'longShortRatio']
+#)
+#print(data.head())
+df = pd.DataFrame(data)
+df['global.longShortRatio'] = pd.to_numeric(df['global.longShortRatio'],errors='coerce')
+df['top.longShortRatio'] = pd.to_numeric(df['top.longShortRatio'],errors='coerce')
+print(df.plot("timestamp", ["global.longShortRatio", "top.longShortRatio"]))
 
 # %%
 for entry in db.longshort.aggregate([
@@ -70,14 +87,9 @@ for entry in db3.longshort.find():
     break
 
 #%%
-db3.longshort.update_many( {},
+db3.longshort.update_many( {"timestamp" : { "$type": "array" }},
   [
-    { "$replaceRoot": 
-        { "newRoot": { 
-            "timestamp" : "$global.timestamp", 
-            "global" : {"$first" : "$global"}, 
-            "top" : {"$first" : "$top" }
-            }
+    { "$set": { "timestamp": { "$first" : "$timestamp" }
         }
     }
   ]

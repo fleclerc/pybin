@@ -1,3 +1,4 @@
+import json
 class AggregateTradeEvent:
 
     def __init__(self):
@@ -26,3 +27,8 @@ class AggregateTradeEvent:
         result.time = json_wrapper.get_int("T")
         result.isBuyerMaker = json_wrapper.get_boolean("m")
         return result
+
+    def toJSON(self):
+        return self.__dict__
+        #return json.dumps(self, default=lambda o: o.__dict__, 
+        #    sort_keys=True, indent=4)                

@@ -1,3 +1,4 @@
+import json
 class AggregateTrade:
 
     def __init__(self):
@@ -21,3 +22,7 @@ class AggregateTrade:
         trade.isBuyerMaker = json_data.get_boolean("m")
         
         return trade
+    
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)        
