@@ -1,3 +1,5 @@
+import json
+
 class LiquidationOrder:
 
     def __init__(self):
@@ -12,7 +14,8 @@ class LiquidationOrder:
         self.lastFilledQty = 0.0
         self.lastFilledAccumulatedQty = 0.0
         self.time = 0
-
+    def toJSON(self):
+        return self.__dict__
 
 class LiquidationOrderEvent:
 
@@ -41,3 +44,10 @@ class LiquidationOrderEvent:
         element.time = data.get_int("T")
         result.data = element
         return result
+
+    def toJSON(self):
+        d = self.__dict__.copy()
+        d['data'] = d['data'].toJSON()
+        return d
+        #return json.dumps(self, default=lambda o: o.__dict__, 
+        #    sort_keys=True, indent=4)        

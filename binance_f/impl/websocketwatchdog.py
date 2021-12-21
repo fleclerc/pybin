@@ -8,6 +8,7 @@ from binance_f.impl.utils.timeservice import get_current_timestamp
 def watch_dog_job(*args):
     watch_dog_instance = args[0]
     for connection in watch_dog_instance.connection_list:
+        #watch_dog_instance.logger.info(f"[Sub][{str(connection.id)}] {watch_dog_instance.receive_limit_ms}")
         if connection.state == ConnectionState.CONNECTED:
             if watch_dog_instance.is_auto_connect:
                 ts = get_current_timestamp() - connection.last_receive_time
@@ -26,10 +27,10 @@ def watch_dog_job(*args):
 
 class WebSocketWatchDog(threading.Thread):
     mutex = threading.Lock()
-    connection_list = list()
 
     def __init__(self, is_auto_connect=True, receive_limit_ms=60000, connection_delay_failure=15):
         threading.Thread.__init__(self)
+        self.connection_list = list()
         self.is_auto_connect = is_auto_connect
         self.receive_limit_ms = receive_limit_ms
         self.connection_delay_failure = connection_delay_failure
